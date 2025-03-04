@@ -1,0 +1,38 @@
+---
+
+- name: Clone VM on Proxmox
+  hosts: #Hosts pve-server in file inventory
+  vars_files:
+    - ./vars/vms.yml
+  tasks:
+    - name: Clone VM
+      community.general.proxmox_kvm:
+        api_user: "{{ api_user }}"
+        api_host: "{{ api_host }}"
+        api_password: "{{ api_password }}"
+        clone: "{{ clone_vm }}"
+        newid: #New VMID for the clone.
+        name: #Name Clone VM
+        node: "{{ node }}"
+        storage: #Target storage for full clone.
+        timeout: 1500
+    - name: Update VM
+      community.general.proxmox_kvm:
+        api_user: "{{ api_user }}"
+        api_host: "{{ api_host }}"
+        api_password: "{{ api_password }}"
+        node: "{{ node }}"
+        vmid: #Specifies the instance ID. P.S У меня работало только если добавил этот значение, при остальных случаях он у меня сбрасывал его
+        name: #Name Clone VM
+        ipconfig:
+          ipconfig0: 'ip=192.168.0.1/24,gw=192.168.0.1'
+        agent: enabled=1,fstrim_cloned_disks=1
+        update: true
+    - name: Start VM
+      community.general.proxmox_kvm:
+        api_user: "{{ api_user }}"
+        api_password: "{{ api_password }}"
+        api_host: "{{ api_host }}"
+        name: #Name Clone VM
+        node: "{{ node }}"
+        state: started
