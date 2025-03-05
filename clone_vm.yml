@@ -25,7 +25,7 @@
         node: "{{ node }}"
         vmid: "{{ new_vmid }}"
         ipconfig:
-          ipconfig0: 'ip=192.168.0.1/24,gw=192.168.0.1'
+          ipconfig0: 'ip={{ ip_addresses }},gw={{ gateway }}'
         agent: enabled=1,fstrim_cloned_disks=1
         update: true
     - name: Start VM
